@@ -1,0 +1,16 @@
+#!/bin/bash
+# 산출물: .claude/hooks/circuit-breaker.sh (step5). PreToolUse(Bash) — 자율 루프가 트립되면 세션 내에서도 즉시 정지(exit 2).
+# scripts/phase.json 의 .circuit_breaker.tripped 가 true면 더 이상의 Bash 실행을 막는다.
+# execute.sh 가 연속 에러 N회에서 tripped=true 로 세팅한다(§ scripts/execute.sh). 이 훅은 그 상태를 존중.
+
+command -v jq >/dev/null || exit 0   # jq 없으면 판정 불가 → fail-open
+STATE="${CLAUDE_PROJECT_DIR:-.}/scripts/phase.json"
+[ -f "$STATE" ] || exit 0            # 자율 실행 중이 아니면 phase.json 없음 → 통과
+
+TRIPPED=$(jq -r '.circuit_breaker.tripped // false' "$STATE" 2>/dev/null)
+if [ "$TRIPPED" = "true" ]; then
+  REASON=$(jq -r '.circuit_breaker.tripped_reason // "unknown"' "$STATE" 2>/dev/null)
+  echo "차단(서킷브레이커): 자율 루프가 연속 실패로 정지됨 — '$REASON'. phase.json을 점검하고 사람이 재개하세요." >&2
+  exit 2
+fi
+exit 0

@@ -48,16 +48,10 @@ build_report() {
   echo "----------------------------------------------------------------------"
   local gtotal=0
   # 루트(README, ORCHESTRATOR)
-  read -r f c < <(count_chars "$ROOT/README.md" "$ORCHESTRATOR_PATH" 2>/dev/null || count_chars "$ROOT/README.md" "$ROOT/ORCHESTRATOR.md")
+  read -r f c < <(count_chars "$ROOT/README.md" "$ROOT/ORCHESTRATOR.md")
   row "root (README+ORCH)" "$f" "$c"; gtotal=$((gtotal + c))
-  # phase 0..7
-  for d in "$ROOT"/phase/phase*/; do
-    [ -d "$d" ] || continue
-    read -r f c < <(count_chars "$d")
-    row "$(basename "$d")" "$f" "$c"; gtotal=$((gtotal + c))
-  done
-  # _shared, templates (빌드 시 로드됨)
-  for area in _shared templates; do
+  # steps, kb, catalog, templates (빌드 시 단계별로 로드됨)
+  for area in steps kb catalog templates; do
     [ -d "$ROOT/$area" ] || continue
     read -r f c < <(count_chars "$ROOT/$area")
     row "$area/" "$f" "$c"; gtotal=$((gtotal + c))
@@ -78,16 +72,19 @@ runtime_report() {
   echo "# Runtime cost (생성 산출물 — 매 작업 로드)  target=$proj"
   echo "# proxy=chars, ~tok=chars/$TOK_DIV"
   echo "----------------------------------------------------------------------"
-  # (a) 항상 로드: 루트 CLAUDE.md — 가장 중요한 지표
-  if [ -f "$proj/CLAUDE.md" ]; then
+  # (a) 항상 로드: 루트 claude.md(헌법) — 가장 중요한 지표
+  local consti=""
+  [ -f "$proj/claude.md" ] && consti="$proj/claude.md"
+  [ -z "$consti" ] && [ -f "$proj/CLAUDE.md" ] && consti="$proj/CLAUDE.md"
+  if [ -n "$consti" ]; then
     local lines chars
-    lines=$(wc -l < "$proj/CLAUDE.md" | tr -d ' ')
-    chars=$(wc -m < "$proj/CLAUDE.md" | tr -d ' ')
-    printf 'ALWAYS-LOADED CLAUDE.md   %5s lines %9s chars  ~%8s tok  %s\n' \
+    lines=$(wc -l < "$consti" | tr -d ' ')
+    chars=$(wc -m < "$consti" | tr -d ' ')
+    printf 'ALWAYS-LOADED claude.md   %5s lines %9s chars  ~%8s tok  %s\n' \
       "$lines" "$chars" "$((chars / TOK_DIV))" \
-      "$([ "$lines" -le 60 ] && echo '[OK <=60]' || echo '[OVER 60!]')"
+      "$([ "$lines" -le 120 ] && echo '[OK <=120]' || echo '[OVER 120!]')"
   else
-    echo "ALWAYS-LOADED CLAUDE.md   (없음)"
+    echo "ALWAYS-LOADED claude.md   (없음)"
   fi
   # (b) on-trigger: agents (호출 시 1개씩 로드 → 평균/최대가 의미있음)
   if [ -d "$proj/.claude/agents" ]; then
@@ -119,7 +116,7 @@ dup_report() {
   echo "----------------------------------------------------------------------"
   dup_one() { # label  pattern
     local n
-    n=$(grep -rlE "$2" "$ROOT/phase" "$ROOT/_shared" "$ROOT/templates" 2>/dev/null | wc -l | tr -d ' ')
+    n=$(grep -rlE "$2" "$ROOT/steps" "$ROOT/kb" "$ROOT/catalog" "$ROOT/templates" 2>/dev/null | wc -l | tr -d ' ')
     printf '%-34s %3s files\n' "$1" "$n"
   }
   dup_one "안전규칙 (terraform apply)"   'terraform apply'
@@ -137,24 +134,33 @@ gate_report() {
   local proj="$1" fail=0
   [ -d "$proj" ] || { echo "GATE ERROR: 경로 없음: $proj" >&2; exit 2; }
   echo "# Token gate  target=$proj"
-  # 1) CLAUDE.md ≤ 60줄 (상시 로드 상한)
-  if [ -f "$proj/CLAUDE.md" ]; then
-    local l; l=$(wc -l < "$proj/CLAUDE.md" | tr -d ' ')
-    if [ "$l" -le 60 ]; then echo "  [OK]   CLAUDE.md ${l}줄 (≤60)"
-    else echo "  [FAIL] CLAUDE.md ${l}줄 > 60 — Conventions·Bug Log를 .claude/rules/로 분리"; fail=1; fi
+  # 1) 헌법 claude.md ≤ 120줄 (상시 로드 상한 — 60줄 강박은 폐지, 깊은 내용은 docs/로)
+  local consti=""
+  [ -f "$proj/claude.md" ] && consti="$proj/claude.md"
+  [ -z "$consti" ] && [ -f "$proj/CLAUDE.md" ] && consti="$proj/CLAUDE.md"
+  if [ -n "$consti" ]; then
+    local l; l=$(wc -l < "$consti" | tr -d ' ')
+    if [ "$l" -le 120 ]; then echo "  [OK]   claude.md ${l}줄 (≤120)"
+    else echo "  [FAIL] claude.md ${l}줄 > 120 — 깊은 내용은 docs/(SDD)로 분리"; fail=1; fi
+  else
+    echo "  [FAIL] 루트 claude.md(헌법) 없음"; fail=1
   fi
   # 2) skill 본문 ≤ 500줄
   while IFS= read -r sk; do
     local sl; sl=$(wc -l < "$sk" | tr -d ' ')
     [ "$sl" -gt 500 ] && { echo "  [FAIL] ${sk#$proj/} ${sl}줄 > 500 — references/로 분리"; fail=1; }
   done < <(find "$proj/.claude/skills" -name 'SKILL.md' 2>/dev/null)
-  # 3) 안전 표준응답 단일 소스 — 스킬에 전문 복붙 금지(.claude/rules/safety.md 참조해야)
+  # 3) 안전 표준응답 단일 소스 — 스킬에 전문 복붙 금지(루트 claude.md '# CRITICAL — Safety' 참조해야)
   # grep은 매치 없음(=정상)일 때 exit 1 → set -e/pipefail에 걸리므로 || true 로 감싼다.
   local dupes
   dupes=$( { grep -rl '직접 실행하지 않습니다' "$proj/.claude/skills" 2>/dev/null || true; } | wc -l | tr -d ' ')
   if [ "${dupes:-0}" -gt 0 ]; then
-    echo "  [FAIL] 표준 응답이 스킬 ${dupes}곳에 복붙됨 — .claude/rules/safety.md 참조로 교체"; fail=1
+    echo "  [FAIL] 표준 응답이 스킬 ${dupes}곳에 복붙됨 — 루트 claude.md '# CRITICAL — Safety' 참조로 교체"; fail=1
   else echo "  [OK]   안전 표준응답 단일 소스"; fi
+  # 4) 옛 .claude/rules/safety.md 잔재 금지(폐지됨 — 헌법+훅으로 병합)
+  if [ -e "$proj/.claude/rules/safety.md" ]; then
+    echo "  [FAIL] .claude/rules/safety.md 잔재 — 폐지됨(헌법 claude.md + 훅으로 병합)"; fail=1
+  fi
   echo "----------------------------------------------------------------------"
   if [ "$fail" -eq 0 ]; then echo "GATE PASS"; else echo "GATE FAIL (위 항목 수정 후 재실행)"; fi
   return "$fail"

@@ -1,0 +1,53 @@
+{
+  "//": "scripts/phase.json — /harness가 phases[]를 채우고 approved=false로 둔다. execute.sh만 쓴다.",
+  "version": 1,
+  "mode": "greenfield",
+  "approved": false,
+  "circuit_breaker": {
+    "max_consecutive_errors": 5,
+    "consecutive_errors": 0,
+    "tripped": false,
+    "tripped_reason": null
+  },
+  "session": {
+    "per_phase_timeout_sec": 1800,
+    "model": "opus",
+    "max_phases_per_run": null
+  },
+  "current": null,
+  "phases": [
+    {
+      "id": "P1",
+      "title": "주문 도메인 모델 + Flyway 스키마",
+      "depends_on": [],
+      "deliverables": ["app/.../domain/Order.java", "app/src/main/resources/db/migration/V1__orders.sql"],
+      "test_cmd": "./gradlew test --tests '*OrderRepositoryTest'",
+      "status": "pending",
+      "attempts": 0,
+      "last_error": null,
+      "test": { "ran": false, "passed": false, "ts": null }
+    },
+    {
+      "id": "P2",
+      "title": "주문 생성 REST 엔드포인트",
+      "depends_on": ["P1"],
+      "deliverables": ["app/.../api/OrderController.java", "app/.../dto/OrderDtos.java"],
+      "test_cmd": "./gradlew test --tests '*OrderControllerTest'",
+      "status": "pending",
+      "attempts": 0,
+      "last_error": null,
+      "test": { "ran": false, "passed": false, "ts": null }
+    },
+    {
+      "id": "P3",
+      "title": "결제 처리(외부 PG 래퍼) + 통합 테스트",
+      "depends_on": ["P2"],
+      "deliverables": ["app/.../payment/PaymentService.java"],
+      "test_cmd": "./gradlew test --tests '*PaymentServiceIT'",
+      "status": "pending",
+      "attempts": 0,
+      "last_error": null,
+      "test": { "ran": false, "passed": false, "ts": null }
+    }
+  ]
+}

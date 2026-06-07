@@ -1,0 +1,43 @@
+{
+  "//": "산출물: scripts/phase.json. /harness가 phases[]를 채우고 approved=false로 둔다. 사람이 검토 후 approved=true.",
+  "//writer": "이 파일은 scripts/execute.sh만 쓴다(모델은 읽기 전용). 동시 쓰기 레이스 방지.",
+  "version": 1,
+  "mode": "<greenfield | existing>",
+  "approved": false,
+  "circuit_breaker": {
+    "max_consecutive_errors": 5,
+    "consecutive_errors": 0,
+    "tripped": false,
+    "tripped_reason": null
+  },
+  "session": {
+    "per_phase_timeout_sec": 1800,
+    "model": "opus",
+    "max_phases_per_run": null
+  },
+  "current": null,
+  "phases": [
+    {
+      "id": "P1",
+      "title": "<독립적으로 테스트 가능한 첫 작업 단위>",
+      "depends_on": [],
+      "deliverables": ["<만들/바꿀 파일이나 산출물>"],
+      "test_cmd": "<이 phase 완료를 증명하는 테스트 명령. 예: ./gradlew test --tests '*FooTest'>",
+      "status": "pending",
+      "attempts": 0,
+      "last_error": null,
+      "test": { "ran": false, "passed": false, "ts": null }
+    },
+    {
+      "id": "P2",
+      "title": "<다음 단위>",
+      "depends_on": ["P1"],
+      "deliverables": ["<...>"],
+      "test_cmd": "<...>",
+      "status": "pending",
+      "attempts": 0,
+      "last_error": null,
+      "test": { "ran": false, "passed": false, "ts": null }
+    }
+  ]
+}

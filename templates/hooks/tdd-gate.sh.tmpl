@@ -1,0 +1,38 @@
+#!/bin/bash
+# 산출물: .claude/hooks/tdd-gate.sh (step5). PreToolUse(Edit|Write) — 테스트 없는 구현 파일 작성 차단(exit 2).
+# 입력: stdin JSON (.tool_input.file_path). TDD 강제: 대응 테스트가 없으면 구현 파일을 못 만든다.
+# 정책 단일소스: 루트 claude.md '# CRITICAL — TDD'. 스택별 테스트 경로 매핑은 kb/tooling-matrix.md 기반으로 채울 것.
+
+command -v jq >/dev/null || exit 0   # jq 없으면 게이트 불가 → fail-open
+INPUT=$(cat)
+FP=$(printf '%s' "$INPUT" | jq -r '.tool_input.file_path // empty')
+[ -z "$FP" ] && exit 0
+ROOT="${CLAUDE_PROJECT_DIR:-.}"
+
+# 1) 테스트 파일 자체이거나 비구현 파일이면 통과 (테스트는 항상 먼저 쓸 수 있어야 함)
+case "$FP" in
+  *test*|*Test*|*spec*|*Spec*|*__tests__*|*.md|*.txt|*.json|*.yaml|*.yml|*.tf|*.tfvars|*.sh) exit 0 ;;
+esac
+
+# 2) 구현 대상으로 보이는 확장자만 게이트 (스택에 맞춰 조정)
+case "$FP" in
+  *.java|*.kt|*.ts|*.tsx|*.js|*.jsx|*.py|*.go|*.rb) : ;;
+  *) exit 0 ;;
+esac
+
+# 3) greenfield 부트스트랩 예외: 레포에 테스트가 0개면 첫 구현 허용(테스트 프레임워크 도입 전)
+HAS_ANY_TEST=$(grep -rliE 'test|spec' "$ROOT" --include='*test*' --include='*Test*' --include='*spec*' -m1 2>/dev/null | head -1)
+[ -z "$HAS_ANY_TEST" ] && exit 0
+
+# 4) 대응 테스트 존재 추정: 파일명 stem 기준으로 *Test*/*spec* 파일이 있는지
+BASE=$(basename "$FP"); STEM="${BASE%.*}"
+if grep -rliE "${STEM}(Test|Spec|_test|.test|.spec)" "$ROOT" -m1 2>/dev/null | grep -qiE 'test|spec'; then
+  exit 0
+fi
+# 동일 stem의 테스트 파일을 이름으로 직접 탐색
+if find "$ROOT" -type f \( -iname "${STEM}*test*" -o -iname "${STEM}*spec*" -o -iname "test*${STEM}*" \) 2>/dev/null | grep -q .; then
+  exit 0
+fi
+
+echo "차단(TDD): '${BASE}'의 실패 테스트가 먼저 없습니다. 대응 테스트(예: ${STEM}Test)를 먼저 작성하세요 — 루트 claude.md '# CRITICAL — TDD'." >&2
+exit 2

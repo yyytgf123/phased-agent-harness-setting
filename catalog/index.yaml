@@ -1,0 +1,52 @@
+# catalog/index.yaml — tool/keyword → blueprint 선택 규칙
+# step3(agents)·step4(skills)가 평가. 매칭 조건:
+#   when_any:  도구 목록 또는 도메인 설명에 키워드가 하나라도 있으면 선택
+#   always:    항상 선택
+#   when_mixed: repo_type == mixed (app+infra) 일 때만
+# 키워드는 대소문자 무시. 도메인 설명 자유서술도 함께 스캔한다.
+
+agents:
+  - id: backend-dev
+    when_any: [java, spring, kotlin, node, express, nestjs, python, fastapi, django, go, gradle, maven, npm, rest, api, backend, server]
+  - id: frontend-dev
+    when_any: [react, next, vue, nuxt, svelte, angular, typescript, vite, webpack, ui, frontend, web]
+  - id: infra-dev
+    when_any: [terraform, pulumi, cloudformation, aws, gcp, azure, vpc, iam, rds, s3, infra, iac]
+  - id: k8s-dev
+    when_any: [kubernetes, k8s, helm, kustomize, eks, gke, aks, manifest, deployment, ingress]
+  - id: db-migration-dev
+    when_any: [flyway, liquibase, alembic, prisma, migration, schema, postgres, postgresql, mysql, rdbms]
+  - id: ci-cd-dev
+    when_any: [github actions, gitlab ci, jenkins, circleci, argo, pipeline, ci, cd, workflow]
+  - id: reviewer
+    always: true
+  - id: security-reviewer
+    when_any: [payment, pg, auth, oauth, jwt, secret, credential, pci, gdpr, encryption, security]
+  - id: qa
+    when_mixed: true
+
+skills:
+  - id: add-rest-endpoint
+    when_any: [rest, api, controller, endpoint, route, spring, express, nestjs, fastapi, django]
+  - id: write-integration-test
+    when_any: [test, junit, pytest, jest, vitest, integration, e2e]
+  - id: fix-bug-with-test
+    always: true                       # TDD 재현-수정은 어느 스택이든 유효
+  - id: refactor-module
+    always: true
+  - id: add-db-migration
+    when_any: [flyway, liquibase, alembic, prisma, migration, schema]
+  - id: add-frontend-component
+    when_any: [react, next, vue, svelte, angular, component, ui]
+  - id: add-terraform-module
+    when_any: [terraform, pulumi, iac, module]
+  - id: add-k8s-manifest
+    when_any: [kubernetes, k8s, manifest, deployment, kustomize]
+  - id: add-helm-chart
+    when_any: [helm, chart]
+  - id: add-alert-rule
+    when_any: [prometheus, grafana, alert, alerting, slo, monitoring]
+  - id: add-ci-workflow
+    when_any: [github actions, gitlab ci, jenkins, ci, cd, pipeline, workflow]
+  - id: cross-boundary-check
+    when_mixed: true

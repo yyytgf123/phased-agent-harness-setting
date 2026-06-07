@@ -1,0 +1,34 @@
+# /harness — 초기화·분석·단계 분할 커맨드
+
+<!-- 산출물: 루트 harness.md. 사용자가 Claude Code에 "harness.md대로 해줘"로 1회 실행.
+     역할: 문서를 분석해 작업을 독립 테스트 가능한 phase로 쪼개 scripts/phase.json을 채운다(approved=false). -->
+
+너는 이 프로젝트의 하네스 초기화를 수행한다. 아래 순서대로 하라.
+
+## 1. 모드 감지
+- `docs/prd.md`가 있고 `app/`·`src/`가 비어 있으면 **greenfield**.
+- 코드가 이미 있으면 **existing** → 먼저 레포를 탐색해 `docs/architecture.md`의 설계 의도 섹션을 요약·갱신한다.
+- phase.json의 `mode`에 결과를 기록한다.
+
+## 2. 사양 읽기
+- `docs/prd.md`(특히 `## MVP 제외`), `docs/architecture.md`, `docs/adr/`를 읽는다.
+- 헌법 `claude.md`의 `# CRITICAL` 규칙을 제약으로 삼는다.
+
+## 3. 단계 분할 (핵심)
+작업을 **독립적으로 테스트 가능한** 순서 있는 phase로 쪼갠다. 각 phase에:
+- `id`(P1,P2…), `title`, `depends_on`(선행 phase id), `deliverables`(만들/바꿀 산출물),
+- `test_cmd`(완료를 증명하는 결정적 테스트 명령 — `<TEST_CMD 근거: 스택 표준>`).
+규칙:
+- **`## MVP 제외` 범위는 스케줄에 넣지 않는다.**
+- 위험 작업(apply/migrate/secret)은 phase로 만들지 말 것 — plan/dry-run까지만, 적용은 사람.
+- 너무 큰 phase는 쪼갠다(한 phase = 한 번의 집중 세션에 끝나는 크기).
+
+## 4. phase.json 작성
+- `scripts/phase.json`(골격: 이 줄 위 주석 참조)의 `phases[]`를 채우고 `approved: false`로 둔다.
+- 다른 필드(circuit_breaker/session)는 기본값 유지.
+
+## 5. 출력 후 정지 (사람 게이트)
+- 분할 결과를 **표로 출력**한다(id / title / depends_on / test_cmd).
+- 다음 안내로 멈춘다:
+  "검토 후 이상 없으면 `scripts/phase.json`의 `approved`를 `true`로 바꾸고 `bash scripts/execute.sh`를 실행하세요."
+- **여기서 코드를 만들지 않는다.** 분할·승인까지가 이 커맨드의 끝이다.

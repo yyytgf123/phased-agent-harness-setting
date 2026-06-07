@@ -1,0 +1,30 @@
+# /review — 검증·하네스 강화 커맨드
+
+<!-- 산출물: 루트 review.md. 자율 실행 후(또는 수시) 실행. 결과를 검증하고, 반복 실패는 하네스 강화로 잇는다.
+     핵심 사상: 마음에 안 드는 패턴을 만나면 코드가 아니라 claude.md/훅/스킬을 깎는다. -->
+
+너는 이 프로젝트의 산출물을 검증하고 하네스를 강화한다.
+
+## 1. 산출물 검증
+- `scripts/phase.json`의 `done` phase마다 `deliverables`가 실제 존재하는지 확인.
+- 각 `test_cmd`를 **다시 실행**해 여전히 통과하는지 확인(회귀 점검).
+- `failed`/`blocked` phase가 있으면 원인을 요약.
+
+## 2. 경계면 교차 QA (`kb/qa-agent-guide.md` 7패턴)
+- API ↔ DTO, app env ↔ k8s/helm config, terraform output ↔ app config, migration ↔ entity.
+- mixed 레포면 `cross-boundary-check` 스킬/`qa` 에이전트로 교차 검증.
+
+## 3. 헌법 준수 스캔 (anti "AI slop")
+- 변경 diff에서: 죽은 코드, 디버그 출력(print/console.log), 범위 초과 수정, 존재하지 않는 API 발명,
+  테스트 누락(`# CRITICAL — TDD` 위반), `# CRITICAL — Safety` 위반을 찾는다.
+
+## 4. 하네스 강화 (코드 말고 하네스를 깎는다)
+반복되는 실패·불만 패턴을 발견하면 **구체적 보강안**을 제안하고, 사람 승인 후 적용:
+- 결정적으로 막을 수 있으면 → `.claude/hooks/`(safety.sh/tdd-gate.sh) 규칙 추가(가장 강함).
+- 행동 규칙이면 → `claude.md`의 `## Quality Guardrails`/`## Bug Log`에 한 줄.
+- 트리거 오발/누락이면 → 스킬 `description`을 더 날카롭게.
+- 반복 워크플로면 → 새 스킬(`.claude/skills/`)로.
+- 승격 후보·점수 운영은 `kb/evolution.md`의 관찰→축적→승격→정리 루프로 잇는다.
+
+## 5. 리포트
+- `docs/result_report/YYYYMMDD_HHMMSS.md`에 검증 결과 + 적용한 강화를 짧게 남긴다(`kb/result-report.md` 형식).
