@@ -58,11 +58,12 @@ phased-agent-harness-setting/
 │       ├── observe-spec.md        관찰 Hook 명세 + observe.sh
 │       └── instinct-format.md     저장 포맷 + 신뢰도 점수
 │
-├── templates/                     ← 산출물 골격 (Phase 3·4·5가 떠서 씀)
-│   ├── README.md
-│   ├── CLAUDE.md.tmpl             → 프로젝트 루트 CLAUDE.md (60줄 이하)
-│   ├── AGENT.md.tmpl              → .claude/agents/{name}.md
-│   └── SKILL.md.tmpl             → .claude/skills/{name}/SKILL.md
+├── templates/                     ← 산출물 골격 (모든 Phase 커버, 단일 소스)
+│   ├── README.md                  전체 템플릿 인덱스
+│   ├── CLAUDE.md.tmpl · AGENT.md.tmpl · SKILL.md.tmpl   (P3·4·5)
+│   ├── rules-safety · settings.json · architecture.md · result-report · instincts.md.tmpl
+│   ├── hooks/                     safety.sh · observe.sh (P3·7)
+│   └── reports/                   version-table · discovery · architecture-design · validation (P0·1·2·6)
 │
 └── _shared/                       ← 여러 Phase 공통
     ├── README.md
@@ -194,3 +195,9 @@ flowchart LR
 외부 벤치마크를 그대로 믿지 말 것. 대표 작업 3~5개(앱 2 + 인프라 1~2)로
 2~4주 내부 파일럿을 돌리고, **harness 적용 전후 같은 작업을 비교**하는 것이 유일한 개선 근거다.
 (측정 예: 테스트 포함률, 컨벤션 위반 수, 범위 침범 횟수, 재작업 횟수.)
+
+### 토큰·성능 측정 도구
+- `tools/token-report.sh` — 빌드타임/런타임 토큰·중복·게이트 측정. 규칙은 `_shared/metrics.md`.
+  - `--build` 키트 docs · `--runtime <proj>` 생성물 · `--dup` 중복 · `--gate <proj>` 임계 위반 시 non-zero exit.
+- `docs/metrics/` — baseline 스냅샷 + 전후 delta. `examples/sample-harness/` — 최적화 템플릿의 생성물 예시.
+- 핵심 사상: **상시 로드 비용(CLAUDE.md·스킬)을 게이트로 고정**한다. 빌드타임은 하네스당 1회라 후순위.

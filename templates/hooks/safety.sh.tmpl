@@ -1,0 +1,16 @@
+#!/bin/bash
+# 산출물: .claude/hooks/safety.sh (Phase 3). PreToolUse 차단형 Hook — 위험 패턴이면 exit 1.
+# 차단은 이 훅 담당, 관찰은 observe.sh 담당(둘은 별개). 전체 규칙은 .claude/rules/safety.md.
+
+# 예: 커밋 직전 시크릿/대용량 plan 산출물 스테이징 차단
+if git diff --cached --name-only 2>/dev/null | grep -qE '\.env$|tfstate|-prod\.'; then
+  echo "ERROR: 민감 파일이 스테이징됨. 제거 후 커밋."; exit 1
+fi
+
+# 예: 위험 명령 차단 (런타임이 주는 도구 인자 규약에 맞춰 채울 것)
+# case "$TOOL_CMD" in
+#   *"terraform apply"*|*"kubectl apply"*|*"git push --force"*)
+#     echo "ERROR: <명령>은 사람 승인 필요. plan/dry-run까지만."; exit 1 ;;
+# esac
+
+exit 0

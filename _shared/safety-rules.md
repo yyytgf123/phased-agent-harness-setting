@@ -1,6 +1,8 @@
 # Safety Rules — 위험 명령 차단 (공통 블록)
 
 > CLAUDE.md의 NEVER 섹션과 각 에이전트 정의에 반영한다.
+> 생성물 골격: `.claude/rules/safety.md` ← `../templates/rules-safety.md.tmpl`,
+> `.claude/settings.json` ← `../templates/settings.json.tmpl`, `.claude/hooks/safety.sh` ← `../templates/hooks/safety.sh.tmpl`.
 
 ## 절대 금지 (사람 승인 없이 실행 불가)
 - `terraform apply` / `destroy` → plan까지만
@@ -35,12 +37,5 @@
 | PostToolUse | 실행 후 | 파일 변경 시 자동 린트(spotless/tflint) |
 | Stop | 완료 선언 전 | 테스트·범위 검증 통과 못 하면 완료 차단 |
 
-예 — 커밋 직전 위험 패턴 차단 (PreToolUse, matcher: `Bash(git commit*)`):
-```bash
-#!/bin/bash
-# 시크릿/대용량 plan 산출물 커밋 차단
-if git diff --cached --name-only | grep -E '\.env$|tfstate|-prod\.'; then
-  echo "ERROR: 민감 파일이 스테이징됨. 제거 후 커밋."; exit 1
-fi
-```
+차단 Hook 골격(커밋 직전 시크릿 차단 등)은 `../templates/hooks/safety.sh.tmpl` 참조.
 > 상세 원칙은 design-principles.md 참조.

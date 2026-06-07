@@ -1,0 +1,27 @@
+# 검증 리포트 — Phase 6 산출
+
+<!-- 산출물: Phase 6 검증 결과 + 고칠 것 우선순위. 6종 검증 방법론은 phase6/skill-testing-guide.md. -->
+
+## 1. 구조 검증
+- 에이전트 위치/이름·스킬 frontmatter·참조 일관성·commands 미생성: <OK / 문제>
+
+## 2. 트리거 검증 (스킬별)
+- should-trigger 8~10 통과율: <>  | near-miss 오발동: <>
+
+## 3. 범위 침범 테스트 (혼합 필수)
+- backend-dev에 infra 작업: <거부/위임?>  | infra-dev에 apply: <plan까지만 막힘?>
+
+## 4. With vs Without 비교 (부가가치)
+| 항목 | with-skill | without |
+|------|-----------|---------|
+| <테스트 생성> | <> | <> |
+| <컨벤션 준수> | <> | <> |
+
+## 5. 드라이런
+- Phase 순서·데이터 경로 dead-link·입출력 매칭·폴백: <OK / 문제>
+
+## 6. 토큰 게이트 (`tools/token-report.sh --gate`)
+- CLAUDE.md ≤60줄 · skill ≤500줄 · 안전 표준응답 단일소스: <PASS / FAIL 항목>
+
+## 고칠 것 (우선순위)
+1. <문제 → 복귀 Phase(트리거=P4 / 범위=P3 / 규칙무시=P3) → 재테스트>

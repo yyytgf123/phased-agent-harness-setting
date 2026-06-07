@@ -16,6 +16,8 @@ Phase 2 설계안을 실제 파일로 구축한다. **여기서 처음 산출물
 |--------|-----------|
 | `AGENT.md.tmpl` | `.claude/agents/{name}.md` (에이전트마다 하나씩) |
 | `CLAUDE.md.tmpl` | 루트 `CLAUDE.md` (맵, 60줄 이하) |
+| `rules-safety.md.tmpl` | `.claude/rules/safety.md` (안전 단일 소스) |
+| `settings.json.tmpl` · `hooks/safety.sh.tmpl` | `.claude/settings.json` + `.claude/hooks/safety.sh` (차단 Hook) |
 
 ## 구축 절차
 1. 상세 md(team-examples, qa-agent-guide)를 읽어 팀 구성을 확정한다.
@@ -28,7 +30,9 @@ Phase 2 설계안을 실제 파일로 구축한다. **여기서 처음 산출물
      (상세 근거: `../../_shared/work-orders.md`, `../../_shared/architecture-doc.md`.)
    - `docs/work_orders/`(빈 폴더, 사용자가 지시서를 넣는 곳)와 `docs/result_report/`를 준비한다.
      `docs/architecture.md`는 여기서 만들지 않는다 — Phase 5 종료 시 최초 생성.
-4. `../../_shared/safety-rules.md`의 금지 규칙을 각 에이전트와 CLAUDE.md에 반영.
+4. `../../_shared/safety-rules.md`를 프로젝트 **단일 소스** `.claude/rules/safety.md`로 1회 구축
+   (전체 금지목록 + 표준 응답). CLAUDE.md `## NEVER`는 4줄 요약 + 이 파일 포인터만, 각 에이전트·스킬은
+   표준 응답을 여기서 **참조**한다(전문 복붙 금지 — 트리거 시 로드되는 스킬 파일을 가볍게).
 5. **시스템 강제 장치 구성** (텍스트 규칙보다 우선 — `../../_shared/design-principles.md`):
    - 위험 명령은 `.claude/settings.json`의 Hook(PreToolUse)으로 차단.
    - CLAUDE.md 템플릿의 `## Bug Log` 빈 섹션을 그대로 둔다 (이후 실수 누적용).

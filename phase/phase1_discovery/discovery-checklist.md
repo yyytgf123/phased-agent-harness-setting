@@ -1,6 +1,7 @@
 # Phase 1 Discovery — 탐색 항목 (개발/인프라)
 
 > Phase 1에서 AI가 조사·보고만 하는 항목. 파일 생성 금지. 추측은 "추측" 표시.
+> 보고서 골격: `../../templates/reports/discovery.md.tmpl`.
 
 ## 1. 빌드/실행/검증 명령
 - 빌드: (gradlew build / mvn package / npm run build / terraform init)

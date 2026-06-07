@@ -1,6 +1,7 @@
 # <PROJECT_NAME>
 
-<!-- 60줄 이하. 백과사전 아님, 목차임. 깊은 내용은 app/CLAUDE.md, infra/CLAUDE.md로. -->
+<!-- 60줄 이하(상시 로드 — 매 작업 비용). 백과사전 아님, 목차임. 깊은 내용은 app/CLAUDE.md, infra/CLAUDE.md로.
+     60줄 초과 시: Conventions·Bug Log 누적분을 `.claude/rules/`로 빼고 여기엔 요약·포인터만 남긴다. -->
 
 ## Role
 <예: Spring 백엔드 + Terraform/k8s 인프라가 한 레포에 있는 서비스.>
@@ -38,7 +39,8 @@
 - DB 마이그레이션 임의 수정·실행
 - secret / *-prod.* / tfstate 접근
 - 담당 범위 밖 디렉터리 수정
+<!-- 전체 금지목록 + 표준 응답은 `.claude/rules/safety.md` (단일 소스). 에이전트·스킬은 거기서 참조. -->
 ## Bug Log
-<!-- 세션 간 메모리가 없는 AI에게 "전에 이런 실수 했으니 반복 말라"고 알리는 장치.
-     실수 발견 시마다 한 줄 추가. 매주 5분 리뷰로 규칙 승격. -->
+<!-- 세션 메모리 없는 AI에게 "전에 이 실수 했으니 반복 말라"고 알리는 장치. 실수마다 한 줄 추가.
+     매주 5분 리뷰로 규칙 승격. **최근 ~10줄만 유지**, 넘으면 오래된 항목은 `.claude/rules/bug-log-archive.md`로. -->
 - [YYYY-MM-DD] <무슨 실수> → <어떻게 방지>

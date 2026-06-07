@@ -38,9 +38,7 @@ scope: <app | infra>
 - [ ] (해당 시) _workspace/에 산출물 스키마 기록 → qa 교차검증용
 
 ## 위험 작업 처리 (해당 시)
-- apply/migrate/secret은 plan/dry-run까지만. 표준 응답:
-  "이 작업은 <명령>을 요구하는데 prod 영향이 있어 직접 실행하지 않습니다.
-   <plan/dry-run 결과>를 보여드리니 검토 후 직접 실행하세요."
+- apply/migrate/secret은 plan/dry-run까지만. 전체 금지목록·표준 응답은 `.claude/rules/safety.md` 참조(복붙 금지).
 
 ## 참고 (도구별, on-demand)
 - references/<gradle|maven|aws|gcp...>.md

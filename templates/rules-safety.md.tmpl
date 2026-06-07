@@ -1,0 +1,20 @@
+# Safety Rules — 프로젝트 단일 소스
+
+<!-- 산출물: .claude/rules/safety.md (Phase 3에서 _shared/safety-rules.md를 이 레포에 맞게 1회 구축).
+     CLAUDE.md `## NEVER`는 이 파일의 4줄 요약 + 포인터. 에이전트·스킬은 표준 응답을 여기서 참조(복붙 금지). -->
+
+## 절대 금지 (사람 승인 없이 실행 불가)
+- `terraform apply` / `destroy` → plan까지만
+- `kubectl apply` / `delete` → `--dry-run=client`까지만
+- `helm upgrade/install` (prod) → template/diff까지만
+- DB 마이그레이션 실행 (<flyway migrate, liquibase update, alembic upgrade>) → 작성까지만
+- secret/자격증명 읽기·출력 (*.env, *-prod.*, tfstate, kubeconfig, *.pem)
+- `rm -rf`, `git push --force`, `git reset --hard`
+
+## 표준 응답 (위험 작업 요청 시)
+"이 작업은 <명령>을 요구하는데 prod 영향이 있어 직접 실행하지 않습니다.
+ <plan/dry-run 결과>를 보여드리니 검토 후 직접 실행하세요."
+
+## 범위 침범 차단
+- 앱 에이전트: <infra/, monitoring/> 수정 금지 / 인프라 에이전트: <app/> 소스 수정 금지
+- 침범 시: 거부 + 담당 에이전트로 위임 또는 사람 보고

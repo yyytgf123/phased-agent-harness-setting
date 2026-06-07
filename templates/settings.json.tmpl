@@ -1,0 +1,13 @@
+{
+  "//": "산출물: .claude/settings.json. Phase 3가 safety hook을, Phase 7이 observe hook을 추가한다.",
+  "//hooks": "safety=위험 명령 차단(차단형), observe=패턴 관찰(비차단, 항상 exit 0). 두 훅은 별개 .sh 파일.",
+  "hooks": {
+    "PreToolUse": [
+      { "matcher": "Bash(git commit*)", "hooks": [{ "type": "command", "command": ".claude/hooks/safety.sh" }] },
+      { "matcher": "*", "hooks": [{ "type": "command", "command": ".claude/hooks/observe.sh pre" }] }
+    ],
+    "PostToolUse": [
+      { "matcher": "*", "hooks": [{ "type": "command", "command": ".claude/hooks/observe.sh post" }] }
+    ]
+  }
+}

@@ -55,6 +55,7 @@ version_policy: <auto | strict>
 #   strict = 명시한 버전만 사용, 비면 진행 전 나에게 질문
 
 ### 실행 순서 (폴더 = 단계)
+# 각 단계는 `_shared/README.md`의 "Phase 로드 맵"에 적힌 파일만 로드한다(불필요 컨텍스트 차단).
 0. `phase/phase0_setup/README.md` → 위 입력으로 스택 확정.
    비운 버전은 `phase/phase0_setup/version-policy.md` 규칙대로 **검색 후** 호환 버전 선정.
    선정 결과를 표로 보여주고 내 승인을 받아라.

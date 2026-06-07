@@ -1,0 +1,45 @@
+# orders-service
+
+<!-- 60줄 이하(상시 로드). 목차임. 초과 시 Conventions·Bug Log를 .claude/rules/로 분리. -->
+
+## Role
+주문/결제 백엔드(Spring Boot) + AWS EKS 인프라(Terraform/Helm)가 한 레포에 있는 서비스.
+
+## Map
+- 앱: `app/` → 규칙 `app/CLAUDE.md`
+- 인프라: `infra/` → 규칙 `infra/CLAUDE.md`
+- 모니터링: `monitoring/`
+- 에이전트: `.claude/agents/` | 스킬: `.claude/skills/` | 공통 규칙: `.claude/rules/`
+- 구조 지도: `docs/architecture.md` | 작업지시서: `docs/work_orders/` | 작업기록: `docs/result_report/`
+
+## Build & Test
+- 빌드: `./gradlew build`
+- 테스트: `./gradlew test`
+- 린트: `./gradlew spotlessCheck` / `tflint`
+- 인프라 검증: `terraform validate && terraform plan`
+
+## Conventions (자주 틀리는 것만, 5개 이내)
+- DTO와 Entity 분리, Entity 직접 반환 금지
+- 인프라는 환경별(dev/stg/prod) 디렉터리 분리
+- 결제 모듈은 외부 PG 연동 — 변경 시 reviewer 필수
+
+## When stuck
+1. 관련 테스트 먼저 읽기
+2. 유사 파일 패턴 확인
+3. 막히면 TODO 남기고 넘어가기 (추측 강행 금지)
+
+## Docs & Work Orders (상시 규칙)
+- "작업참고서/작업지시서 참고" 류 지시가 오면 **작업 전 `docs/work_orders/`를 먼저 읽고** 그에 맞춰 작업한다.
+  지목된 파일만 읽는다. 지시서와 레포가 충돌하면 추측 말고 묻는다. (NEVER 규칙은 지시서보다 우선.)
+- 구조(에이전트/스킬/오케스트레이터/Hook)가 바뀌면 `docs/architecture.md`를 **부분 편집으로만** 갱신한다.
+
+## NEVER
+- terraform apply / kubectl apply 직접 실행 (plan/dry-run까지만)
+- DB 마이그레이션 임의 수정·실행
+- secret / *-prod.* / tfstate 접근
+- 담당 범위 밖 디렉터리 수정
+<!-- 전체 금지목록 + 표준 응답은 `.claude/rules/safety.md` (단일 소스). -->
+
+## Bug Log
+<!-- 실수마다 한 줄. 최근 ~10줄만 유지, 넘으면 .claude/rules/bug-log-archive.md로. -->
+- [2026-06-07] reviewer 없이 결제 모듈 머지 → PG 연동 변경은 reviewer 게이트 필수

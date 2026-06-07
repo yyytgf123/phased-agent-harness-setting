@@ -2,40 +2,11 @@
 
 도구 사용을 100% 결정적으로 캡처하는 Hook. LLM 호출 없이 가벼운 셸로 처리한다.
 
-## 설치 (`.claude/settings.json`)
-```json
-{
-  "hooks": {
-    "PreToolUse":  [{ "matcher": "*", "hooks": [{ "type": "command", "command": ".claude/hooks/observe.sh pre" }] }],
-    "PostToolUse": [{ "matcher": "*", "hooks": [{ "type": "command", "command": ".claude/hooks/observe.sh post" }] }]
-  }
-}
-```
-> matcher "*"는 모든 도구를 관찰. 안전 차단용 Hook(safety-rules)과는 별개 파일로 둔다.
-
-## observe.sh (개념 골격)
-```bash
-#!/bin/bash
-# $1 = pre|post. 도구명/인자는 환경변수/stdin으로 전달됨(런타임 규약 확인 필요).
-PHASE="$1"
-PROJECT_HASH=$(git config --get remote.origin.url 2>/dev/null | sha1sum | cut -c1-12)
-[ -z "$PROJECT_HASH" ] && PROJECT_HASH="no-remote"
-DIR=".claude/instincts/$PROJECT_HASH/raw"
-mkdir -p "$DIR"
-
-# 1) 입력 수집 (런타임이 주는 도구명·인자·경로)
-RECORD="$(date -u +%FT%TZ)|$PHASE|$TOOL_NAME|$TOOL_TARGET"
-
-# 2) 민감정보 redact (절대 raw로 남기지 않음)
-RECORD=$(echo "$RECORD" | sed -E 's/(api[_-]?key|secret|token|password)=[^ ]*/\1=[REDACTED]/Ig')
-case "$TOOL_TARGET" in
-  *.env|*-prod.*|*tfstate*|*kubeconfig*|*.pem) RECORD="${RECORD%%|*}|$PHASE|<sensitive-redacted>";;
-esac
-
-# 3) append-only 기록
-echo "$RECORD" >> "$DIR/observations.log"
-exit 0   # 관찰은 절대 작업을 막지 않는다 (차단은 safety Hook 담당)
-```
+## 설치 골격
+- `.claude/settings.json` (observe hook 등록): `../../templates/settings.json.tmpl`. matcher "*"로 모든 도구 관찰,
+  안전 차단 Hook(safety)과는 별개 파일.
+- `.claude/hooks/observe.sh` (캡처 스크립트): `../../templates/hooks/observe.sh.tmpl`.
+  project-hash 스코핑 + redact + append-only.
 
 ## 캡처 항목 (raw observation)
 | 필드 | 예 |

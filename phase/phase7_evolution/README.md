@@ -21,6 +21,12 @@
 | `observe-spec.md` | 관찰 Hook(PreToolUse/PostToolUse) 명세 + 캡처 포맷 |
 | `instinct-format.md` | 패턴 저장 포맷 + 신뢰도 점수(0.3~0.9) 운영 규칙 |
 
+## 쓸 템플릿 (`../../templates/`)
+| 템플릿 | 구축 결과 |
+|--------|-----------|
+| `hooks/observe.sh.tmpl` · `settings.json.tmpl` | `.claude/hooks/observe.sh` + settings.json observe hook |
+| `instincts.md.tmpl` | `.claude/instincts/<hash>/instincts.md` (승격 후보 풀) |
+
 ## 구축 절차
 1. `observe-spec.md`대로 관찰 Hook을 `.claude/settings.json` + `.claude/hooks/observe.sh`에 설치.
 2. 관찰 산출물은 `.claude/instincts/<project-hash>/`에 저장 (`instinct-format.md` 포맷).

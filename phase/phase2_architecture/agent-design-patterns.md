@@ -50,22 +50,8 @@
 
 ## 에이전트 정의 구조 (필수 섹션)
 
-```
----
-name: <agent-name>
-description: <역할 한 줄>
-model: opus            # 추론 품질이 결과 품질에 직결. 기본 opus
-scope: <app/ | infra/,monitoring/ | 전체읽기>
-subagent_type: <general-purpose | Explore | Plan>
----
-
-## 핵심 역할
-## 작업 원칙
-## 입력/출력 프로토콜
-## 에러 핸들링
-## 협업
-## 팀 통신 프로토콜    # 팀 모드일 때만: 누구에게 메시지 받고 보내는가 + 작업 범위
-```
+에이전트 정의 파일 골격은 `../../templates/AGENT.md.tmpl` (frontmatter + 핵심역할/작업원칙/입출력/에러핸들링/협업,
+팀 모드면 팀 통신 프로토콜). 이 단계의 산출물(팀 설계안) 골격은 `../../templates/reports/architecture-design.md.tmpl`.
 
 - 빌트인 타입을 써도 정의 파일은 만든다 (재사용·협업 품질·역할/스킬 분리 때문).
 - **QA 에이전트는 general-purpose** — Explore는 읽기전용이라 검증 스크립트 실행 불가.

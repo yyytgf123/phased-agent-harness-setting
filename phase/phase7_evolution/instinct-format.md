@@ -12,9 +12,7 @@ project-hash는 git remote URL 해시. remote 없으면 `no-remote`. A 프로젝
 새지 않게 레포 단위로 격리한다.
 
 ## instinct 한 줄 포맷 (파싱 쉽게 고정)
-```
-[score=0.7] domain=testing :: <패턴 서술> :: seen=5 last=YYYY-MM-DD
-```
+`instincts.md` 골격은 `../../templates/instincts.md.tmpl`. 한 줄 = `[score=N] domain=tag :: 서술 :: seen=N last=날짜`.
 - domain 태그: code-style / testing / git / iac / k8s / security / review
 - seen: 재관찰 횟수 (자동 카운트 가능). last: 마지막 관찰일.
 

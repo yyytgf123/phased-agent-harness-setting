@@ -1,5 +1,7 @@
 # Skill Testing Guide — 개발/인프라
 
+> 검증 리포트 골격: `../../templates/reports/validation.md.tmpl`.
+
 ## 1. 구조 검증
 - 에이전트 파일이 `.claude/agents/`에 올바른 위치/이름인가
 - 스킬 frontmatter(name, description) 유효한가

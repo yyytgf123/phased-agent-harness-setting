@@ -14,6 +14,7 @@
 | 템플릿 | 구축 결과 |
 |--------|-----------|
 | `SKILL.md.tmpl` | 오케스트레이터도 스킬의 한 형태 — 같은 골격 사용 |
+| `architecture.md.tmpl` | `docs/architecture.md` (이 단계 종료 시 최초 생성) |
 
 ## 구축 절차
 1. `orchestrator-template.md`를 읽어 실행 모드에 맞는 패턴을 고른다.

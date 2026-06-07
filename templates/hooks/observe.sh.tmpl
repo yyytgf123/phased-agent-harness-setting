@@ -1,0 +1,21 @@
+#!/bin/bash
+# 산출물: .claude/hooks/observe.sh (Phase 7). 도구 사용을 100% 결정적으로 캡처. LLM 호출 없음.
+# $1 = pre|post. 도구명/인자는 환경변수/stdin으로 전달됨(런타임 규약 확인 필요). 명세: phase7/observe-spec.md.
+PHASE="$1"
+PROJECT_HASH=$(git config --get remote.origin.url 2>/dev/null | sha1sum | cut -c1-12)
+[ -z "$PROJECT_HASH" ] && PROJECT_HASH="no-remote"
+DIR=".claude/instincts/$PROJECT_HASH/raw"
+mkdir -p "$DIR"
+
+# 1) 입력 수집 (런타임이 주는 도구명·인자·경로)
+RECORD="$(date -u +%FT%TZ)|$PHASE|$TOOL_NAME|$TOOL_TARGET"
+
+# 2) 민감정보 redact (절대 raw로 남기지 않음)
+RECORD=$(echo "$RECORD" | sed -E 's/(api[_-]?key|secret|token|password)=[^ ]*/\1=[REDACTED]/Ig')
+case "$TOOL_TARGET" in
+  *.env|*-prod.*|*tfstate*|*kubeconfig*|*.pem) RECORD="${RECORD%%|*}|$PHASE|<sensitive-redacted>";;
+esac
+
+# 3) append-only 기록
+echo "$RECORD" >> "$DIR/observations.log"
+exit 0   # 관찰은 절대 작업을 막지 않는다 (차단은 safety.sh 담당)

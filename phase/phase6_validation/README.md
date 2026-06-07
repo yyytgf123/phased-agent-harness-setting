@@ -8,12 +8,21 @@
 3. **범위 침범 테스트** — backend-dev에 infra 작업, infra-dev에 apply 시켜 막히는지.
 4. **With-skill vs Without-skill 비교** — 같은 프롬프트 유/무 실행으로 부가가치 측정.
 5. **드라이런** — Phase 순서, 데이터 경로 dead-link, 입출력 매칭, 폴백.
-6. 문제 발견 시 **일반화하여** 수정 후 재테스트.
+6. **토큰 게이트** — `tools/token-report.sh --gate <프로젝트>` 실행. CLAUDE.md ≤60줄·skill 본문 ≤500줄·
+   안전 표준응답 단일소스 위반 시 **non-zero exit → 재작업**. 규칙은 `../../_shared/metrics.md`.
+   결정적 강제를 원하면 생성 프로젝트의 `.claude/settings.json` **Stop hook**으로 이 명령을 건다
+   (design-principles §1: 말로 말고 시스템으로).
+7. 문제 발견 시 **일반화하여** 수정 후 재테스트.
 
 ## 이 폴더 파일
 | 파일 | 용도 |
 |------|------|
 | `skill-testing-guide.md` | 6종 검증 방법론 + 효과 측정 |
+
+## 쓸 템플릿 (`../../templates/`)
+| 템플릿 | 구축 결과 |
+|--------|-----------|
+| `reports/validation.md.tmpl` | 검증 리포트 (6검증 + 고칠 것 우선순위) |
 
 ## 입력 / 출력
 - 입력: Phase 1~5 산출물 전체 (.claude/agents, .claude/skills, 오케스트레이터)

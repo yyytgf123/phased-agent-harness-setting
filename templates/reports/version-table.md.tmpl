@@ -1,0 +1,16 @@
+# 스택 확정 표 — Phase 0 산출 (승인용)
+
+<!-- 산출물: Phase 0에서 사용자에게 보여주고 승인받는 버전 표. 선정 규칙은 phase0/version-policy.md. -->
+
+repo_type: <app | infra | mixed>
+
+| 도구 | 선정 버전 | 근거 |
+|------|-----------|------|
+| <Java> | <21 (LTS)> | <검색 확인, Spring Boot 3.x 호환> |
+| <Spring Boot> | <3.x 최신 patch> | <검색 확인> |
+| <Gradle> | <8.x> | <Spring Boot 3.x 권장> |
+| <Terraform> | <1.x 안정> | <provider 호환 매트릭스> |
+| <...> | <...> | <...> |
+
+<!-- 알려진 호환성 깨짐(breaking)이 있으면 표 아래 경고 한 줄. -->
+이 조합으로 진행할까요?
