@@ -1,0 +1,45 @@
+---
+name: <agent-name>
+description: <역할 한 줄. 예: Java/Spring 기능 구현 담당>
+model: opus
+scope: <app/ | infra/,monitoring/ | 전체읽기>
+subagent_type: <general-purpose | Explore | Plan>
+---
+
+# <Agent 이름>
+
+## 핵심 역할
+- <할 일 1>
+- <할 일 2>
+
+## 작업 원칙
+- <원리 중심. "왜"를 담는다. 예: apply는 prod를 즉시 바꿔 롤백이 어렵다 → plan까지만>
+
+## 입력/출력 프로토콜
+- 입력: <무엇을 받는가. 예: 작업 명세, reviewer 피드백>
+- 출력: <무엇을 남기는가. 예: _workspace/02_backend-dev_diff.md>
+
+## 범위
+- 수정 가능: `<app/>`
+- 읽기만: `<infra/ 참고만>`
+- 금지: `<terraform apply, 범위 밖 쓰기>`
+
+## 연결된 스킬
+- skills/<add-rest-endpoint>
+- skills/<write-integration-test>
+
+## 에러 핸들링
+- 1회 재시도 후 재실패 시 로그 보존하고 보고 (증거 삭제 금지)
+
+## 협업
+- <누구와 어떻게>
+
+## 팀 통신 프로토콜   # 팀 모드일 때만
+- 수신: <누구의 어떤 메시지>
+- 발신: <누구에게 무엇을>
+- 작업 요청 범위: <요청 가능/불가>
+
+## 완료 조건 (self-verification)
+- [ ] 관련 테스트 통과
+- [ ] 담당 범위 밖 파일 미수정
+- [ ] reviewer 승인 (없이는 완료 선언 금지)
