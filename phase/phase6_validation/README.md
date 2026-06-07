@@ -13,6 +13,8 @@
    결정적 강제를 원하면 생성 프로젝트의 `.claude/settings.json` **Stop hook**으로 이 명령을 건다
    (design-principles §1: 말로 말고 시스템으로).
 7. 문제 발견 시 **일반화하여** 수정 후 재테스트.
+8. **샘플 픽스처 점검** — `examples/sample-harness`를 손댔다면 `tools/check-sample.sh` 통과 필수
+   (게이트 + 훅 문법/JSON 유효성 + 깨진 훅 규약 잔재 검사). 표류를 구조적으로 막는다.
 
 ## 이 폴더 파일
 | 파일 | 용도 |

@@ -20,8 +20,8 @@
 4. **프롬프트 텍스트 규칙** — 위 세 개로 못 막을 때의 최후 수단.
 
 > 예: "console.log 지우라"고 CLAUDE.md에 쓰는 것보다, PreToolUse 훅에서
-> 커밋 직전 `grep console.log` 발견 시 `exit 1`로 막는 게 안전하다.
-> 훅 설정 위치: `.claude/settings.json` + `.claude/hooks/*.sh`.
+> 커밋 직전 `grep console.log` 발견 시 `exit 2`로 막는 게 안전하다(exit 1은 비차단=통과).
+> 훅 설정 위치: `.claude/settings.json` + `.claude/hooks/*.sh`. 도구 인자는 stdin JSON으로 들어온다.
 
 ## 2. MCP/도구는 2~3개로 시작 (Tool Thrash 방지)
 외부 API·DB·MCP를 무작정 연결하면 에이전트가 도구 선택에 인지 예산을 낭비하는

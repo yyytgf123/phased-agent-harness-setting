@@ -18,6 +18,7 @@
 | 템플릿 | 구축 결과 |
 |--------|-----------|
 | `reports/architecture-design.md.tmpl` | 팀 설계안 (모드·패턴·에이전트 범위) |
+| `AGENT.md.tmpl` | 설계 시 에이전트 정의 형식 참고용 (실제 생성은 Phase 3) |
 
 ## 입력 / 출력
 - 입력: Phase 1 탐색 보고서

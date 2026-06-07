@@ -1,6 +1,6 @@
 #!/bin/bash
-# 산출물: .claude/hooks/observe.sh (Phase 7). 도구 사용을 100% 결정적으로 캡처. LLM 호출 없음.
-# $1 = pre|post. 입력은 stdin JSON으로 전달됨(.tool_name / .tool_input.command|.file_path). 명세: phase7/observe-spec.md.
+# .claude/hooks/observe.sh (Phase 7 산출물) — 도구 사용을 100% 결정적으로 캡처. LLM 호출 없음. 항상 exit 0(비차단).
+# $1 = pre|post. 입력은 stdin JSON(.tool_name / .tool_input.command|.file_path). 명세: phase7/observe-spec.md.
 PHASE="$1"
 command -v jq >/dev/null || exit 0   # jq 없으면 관찰 스킵(작업은 막지 않음)
 INPUT=$(cat)

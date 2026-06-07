@@ -33,9 +33,11 @@
 
 | Hook | 시점 | 개발/인프라 예 |
 |------|------|----------------|
-| PreToolUse | 도구 실행 전 | `git commit`/`terraform apply` 매칭 시 위험 명령 차단(exit 1) |
+| PreToolUse | 도구 실행 전 | `git commit`/`terraform apply` 매칭 시 위험 명령 차단(차단=exit 2) |
 | PostToolUse | 실행 후 | 파일 변경 시 자동 린트(spotless/tflint) |
 | Stop | 완료 선언 전 | 테스트·범위 검증 통과 못 하면 완료 차단 |
+
+> Hook I/O 규약(Claude Code): matcher는 **도구 이름만** 매칭(`"Bash"` 등). 인자(git commit/terraform apply 등) 분기는 훅이 **stdin JSON**(`.tool_input.command`)을 jq로 파싱해 처리. 차단은 **exit 2**(exit 1은 비차단=통과).
 
 차단 Hook 골격(커밋 직전 시크릿 차단 등)은 `../templates/hooks/safety.sh.tmpl` 참조.
 > 상세 원칙은 design-principles.md 참조.

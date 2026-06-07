@@ -24,5 +24,5 @@
 - 저장은 `.claude/instincts/<project-hash>/raw/observations.log` (프로젝트 격리).
 
 > raw 관찰을 점수 있는 instinct로 올리는 규칙은 `instinct-format.md` 참조.
-> 런타임이 도구명/인자를 어떤 변수로 주는지는 Claude Code 버전마다 다를 수 있으니
-> 설치 시 현재 Hook 입력 규약을 docs에서 확인할 것.
+> Hook 입력은 **stdin JSON**으로 들어온다(`.tool_name`, `.tool_input.command`/`.file_path`). jq로 파싱.
+> 환경변수는 `CLAUDE_PROJECT_DIR` 등만 제공되며 도구명/인자는 stdin으로만 받는다.

@@ -1,13 +1,14 @@
 {
   "//": "산출물: .claude/settings.json. Phase 3가 safety hook을, Phase 7이 observe hook을 추가한다.",
-  "//hooks": "safety=위험 명령 차단(차단형), observe=패턴 관찰(비차단, 항상 exit 0). 두 훅은 별개 .sh 파일.",
+  "//hooks": "safety=위험 명령 차단(차단형, 차단은 exit 2), observe=패턴 관찰(비차단, 항상 exit 0). 두 훅은 별개 .sh 파일.",
+  "//matcher": "matcher는 도구 이름만 매칭(Bash/Edit 등). 인자(git commit/terraform apply 등) 분기는 훅이 stdin JSON을 파싱해 처리. 훅 사용 시 jq 필요.",
   "hooks": {
     "PreToolUse": [
-      { "matcher": "Bash(git commit*)", "hooks": [{ "type": "command", "command": ".claude/hooks/safety.sh" }] },
-      { "matcher": "*", "hooks": [{ "type": "command", "command": ".claude/hooks/observe.sh pre" }] }
+      { "matcher": "Bash", "hooks": [{ "type": "command", "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/safety.sh" }] },
+      { "matcher": "*", "hooks": [{ "type": "command", "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/observe.sh pre" }] }
     ],
     "PostToolUse": [
-      { "matcher": "*", "hooks": [{ "type": "command", "command": ".claude/hooks/observe.sh post" }] }
+      { "matcher": "*", "hooks": [{ "type": "command", "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/observe.sh post" }] }
     ]
   }
 }

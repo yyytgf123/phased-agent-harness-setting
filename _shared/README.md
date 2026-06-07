@@ -13,6 +13,7 @@
 
 ## Phase 로드 맵 (각 단계가 읽을 파일 — 결정적 로딩)
 각 phase는 아래 **딱 그 파일들만** 로드한다. 전체 _shared·templates를 매번 끌어오지 않는다(컨텍스트 절약).
+(표 안 파일명은 약식 — 템플릿 열은 `.tmpl`, _shared 열은 `.md` 생략. 예: `design-principles` = `_shared/design-principles.md`.)
 
 | Phase | 폴더 내 상세 | 템플릿 | _shared |
 |-------|--------------|--------|---------|

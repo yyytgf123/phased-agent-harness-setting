@@ -29,6 +29,8 @@
 
 ## 구축 절차
 1. `observe-spec.md`대로 관찰 Hook을 `.claude/settings.json` + `.claude/hooks/observe.sh`에 설치.
+   - settings.json의 hook 경로는 `${CLAUDE_PROJECT_DIR}/.claude/hooks/observe.sh pre|post` (상대경로 금지).
+   - 설치 후 **실행권한 부여: `chmod +x .claude/hooks/observe.sh`** (안 하면 런타임에 Permission denied).
 2. 관찰 산출물은 `.claude/instincts/<project-hash>/`에 저장 (`instinct-format.md` 포맷).
 3. 주 1회 `evolution-guide.md`의 리듬대로: 점수 갱신 → 0.7↑ 묶음 승격 → 0.3↓·만료 정리.
 4. 승격된 규칙은 Phase 3(CLAUDE.md)·스킬은 Phase 4(.claude/skills) 형식으로 반영.

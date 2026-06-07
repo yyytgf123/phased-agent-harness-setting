@@ -141,7 +141,7 @@ flowchart LR
 
 ## 사용법 (사람)
 
-1. 이 키트 폴더를 적용할 프로젝트 안(예: `<프로젝트>/harness-template/`)에 둔다.
+1. 이 키트 폴더를 적용할 프로젝트 어딘가에 둔다(예: `<프로젝트>/harness-template/`). 둔 위치를 `ORCHESTRATOR.md`의 `<키트 경로>`에 적는다 — 프롬프트의 `phase/..`·`_shared/..` 경로는 모두 그 키트 루트 기준이다.
 2. 이 README로 전체 흐름을 파악한다.
 3. `ORCHESTRATOR.md`의 **■ 입력 칸 3개**만 채운다.
    - ① 사용 도구 + 버전 (버전 비우면 호환 버전을 검색·지정)
@@ -199,5 +199,7 @@ flowchart LR
 ### 토큰·성능 측정 도구
 - `tools/token-report.sh` — 빌드타임/런타임 토큰·중복·게이트 측정. 규칙은 `_shared/metrics.md`.
   - `--build` 키트 docs · `--runtime <proj>` 생성물 · `--dup` 중복 · `--gate <proj>` 임계 위반 시 non-zero exit.
+- `tools/check-sample.sh` — `examples/sample-harness` 픽스처 점검(게이트+훅 문법/JSON+깨진 훅 규약 잔재). 샘플 수정 시 통과 필수.
 - `docs/metrics/` — baseline 스냅샷 + 전후 delta. `examples/sample-harness/` — 최적화 템플릿의 생성물 예시.
+- 훅(safety/observe) 사용 시 `jq` 필요(stdin JSON 파싱). 미설치 시 차단 불가(fail-open) — 설치 권장.
 - 핵심 사상: **상시 로드 비용(CLAUDE.md·스킬)을 게이트로 고정**한다. 빌드타임은 하네스당 1회라 후순위.

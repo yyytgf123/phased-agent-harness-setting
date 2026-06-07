@@ -34,7 +34,11 @@ Phase 2 설계안을 실제 파일로 구축한다. **여기서 처음 산출물
    (전체 금지목록 + 표준 응답). CLAUDE.md `## NEVER`는 4줄 요약 + 이 파일 포인터만, 각 에이전트·스킬은
    표준 응답을 여기서 **참조**한다(전문 복붙 금지 — 트리거 시 로드되는 스킬 파일을 가볍게).
 5. **시스템 강제 장치 구성** (텍스트 규칙보다 우선 — `../../_shared/design-principles.md`):
-   - 위험 명령은 `.claude/settings.json`의 Hook(PreToolUse)으로 차단.
+   - `settings.json.tmpl` → `.claude/settings.json`, `hooks/safety.sh.tmpl` → `.claude/hooks/safety.sh`로 떠서
+     위험 명령을 Hook(PreToolUse)으로 차단.
+   - **hook 경로는 상대경로 금지 — 반드시 `${CLAUDE_PROJECT_DIR}/.claude/hooks/...`.** (상대경로는
+     서브에이전트/하위 디렉토리 실행 시 cwd가 어긋나 "No such file"로 깨진다.)
+   - **생성한 hook에 실행권한 부여: `chmod +x .claude/hooks/safety.sh`.** (안 하면 런타임에 Permission denied.)
    - CLAUDE.md 템플릿의 `## Bug Log` 빈 섹션을 그대로 둔다 (이후 실수 누적용).
 
 > 실사용 패턴을 자동 관찰·승격하는 지속 개선 루프는 Phase 7(Evolution)에서 구성한다.
